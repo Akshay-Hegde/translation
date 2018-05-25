@@ -1,0 +1,50 @@
+{
+  "name": "translation",
+  "version": "1.0.0",
+  "description": "HTML to JSON and translated JSON to HTML",
+  "scripts": {
+    "build": "webpack --config webpack-prod.config.js --colors",
+    "dev": "webpack-dev-server --open --config webpack-dev.config.js --watch --colors"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gurusewak/translation.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "node": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 6,
+      "sourceType": "module"
+    },
+    "rules": {
+      "semi": 2
+    }
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-preset-es2015": "^6.24.1",
+    "clean-webpack-plugin": "^0.1.19",
+    "css-loader": "^0.28.10",
+    "eslint": "^4.18.2",
+    "eslint-loader": "^2.0.0",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "html-webpack-plugin": "^3.0.6",
+    "node-sass": "^4.8.2",
+    "sass-loader": "^6.0.7",
+    "style-loader": "^0.18.2",
+    "uglifyjs-webpack-plugin": "^1.2.3",
+    "webpack": "^4.1.1",
+    "webpack-cli": "^2.1.3",
+    "webpack-dev-server": "^3.1.1"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.9.0"
+  }
+}
