@@ -12,11 +12,11 @@ const json = parse(html);
 
 $('.HTML').text(html);
 
-const JSONdata = json;
+const JSONdata = parse(html);
 let sentenceArray = [];
 let count = 0;
 let translationJSON = {};
-let htmlData = json;
+let htmlData = parse(html);
 const textTags = ['a', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'b', 'i', 'u', 'p', 'td', 'tr', 'dd', 'dt', 'blockquote', 'strong'];
 
 //encode
@@ -38,11 +38,9 @@ function createJSON(data) {
 
 $('.JSON').text(JSON.stringify(createJSON(JSONdata)));
 
-console.log("sentenceArray", sentenceArray);
-console.log("JSONdata", JSONdata);
 
 //decode
-const translatedJSON = [
+let translatedJSON = [
   ["hello div tag -in spanish", " this is a new line-in spanish", ""], "<a class='test'>hello a tag<strong> this is gonna be hard -in spanish</strong></a>", ["hello div 2 tag -in spanish"], "<a class='test'>hello a2 tag<strong> this is gonna be harder -in spanish</strong></a>"
 ];
 $('.transaltionJSON').text(JSON.stringify(translatedJSON));
@@ -50,7 +48,7 @@ $('.transaltionJSON').text(JSON.stringify(translatedJSON));
 function createHTML(data, translatedJSON) {
   for (var i = 0; i < data.length; i++) {
     if (data[i].type === 'element' && (textTags.indexOf(data[i].tagName) !== -1)) {
-      data[i] = translatedJSON[count];
+      data[i] = parse(translatedJSON[count])[0];
       count++;
     } else if (data[i].type === 'element') {
       createHTML(data[i].children, translatedJSON);
@@ -62,11 +60,8 @@ function createHTML(data, translatedJSON) {
   htmlData = [...htmlData, data];
   return data;
 }
-createHTML(JSONdata, translatedJSON);
+createHTML(htmlData, translatedJSON);
 htmlData = htmlData.splice(0, json.length);
-console.log("htmlData", htmlData);
 
-const translatedHTML = stringify([htmlData]);
-console.log("translatedHTML", translatedHTML);
+const translatedHTML = stringify(htmlData);
 $('.translatedHTML').text(translatedHTML);
-//console.log("JSONdata", JSONdata);
