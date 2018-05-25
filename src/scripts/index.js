@@ -16,6 +16,7 @@ const JSONdata = json;
 let sentenceArray = [];
 let count = 0;
 let translationJSON = {};
+let htmlData = json;
 const textTags = ['a', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'b', 'i', 'u', 'p', 'td', 'tr', 'dd', 'dt', 'blockquote', 'strong'];
 
 //encode
@@ -34,7 +35,10 @@ function createJSON(data) {
   return sentenceArray;
 }
 
+
 $('.JSON').text(JSON.stringify(createJSON(JSONdata)));
+
+console.log("sentenceArray", sentenceArray);
 console.log("JSONdata", JSONdata);
 
 //decode
@@ -43,20 +47,26 @@ const translatedJSON = [
 ];
 $('.transaltionJSON').text(JSON.stringify(translatedJSON));
 
-function createHTML(translatedJSON) {
-  console.log("JSONdata", JSONdata);
-  for (var i = 0; i < JSONdata.length; i++) {
-    if (JSONdata[i].type === 'element' && (textTags.indexOf(JSONdata[i].tagName) !== -1)) {
-      JSONdata[i] = translatedJSON[count];
+function createHTML(data, translatedJSON) {
+  for (var i = 0; i < data.length; i++) {
+    if (data[i].type === 'element' && (textTags.indexOf(data[i].tagName) !== -1)) {
+      data[i] = translatedJSON[count];
       count++;
-    } else if (JSONdata[i].type === 'element') {
-      createHTML(JSONdata[i].children, translatedJSON);
-    } else if (JSONdata[i].type === 'text') {
-      JSONdata[i].content = translatedJSON[count].join();
+    } else if (data[i].type === 'element') {
+      createHTML(data[i].children, translatedJSON);
+    } else if (data[i].type === 'text') {
+      data[i].content = translatedJSON[count].join();
       count++;
     }
   }
-  return JSONdata;
+  htmlData = [...htmlData, data];
+  return data;
 }
-//createHTML(JSONdata, translatedJSON);
+createHTML(JSONdata, translatedJSON);
+htmlData = htmlData.splice(0, json.length);
+console.log("htmlData", htmlData);
+
+const translatedHTML = stringify([htmlData]);
+console.log("translatedHTML", translatedHTML);
+$('.translatedHTML').text(translatedHTML);
 //console.log("JSONdata", JSONdata);
