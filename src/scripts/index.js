@@ -53,7 +53,7 @@ function createHTML(data, translatedJSON) {
     } else if (data[i].type === 'element') {
       createHTML(data[i].children, translatedJSON);
     } else if (data[i].type === 'text') {
-      data[i].content = translatedJSON[count].join();
+      data[i].content = translatedJSON[count].join('.');
       count++;
     }
   }
