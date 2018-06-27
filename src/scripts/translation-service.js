@@ -19,10 +19,9 @@ const tranlationService = {
     let translatedObj = {
       1: "hello div tag -in spanish",
       2: " this is a new line -in spanish",
-      3: "",
-      4: "<a class='test'>hello a tag<strong> this is gonna be hard -in spanish</strong></a>",
-      5: "hello div 2 tag",
-      6: "<a class='test'>hello a2 tag<strong> this is gonna be harder -in spanish</strong></a>"
+      3: "<a class='test'>hello a tag<strong> this is gonna be hard -in spanish</strong></a>",
+      4: "hello div 2 tag",
+      5: "<a class='test'>hello a2 tag<strong> this is gonna be harder -in spanish</strong></a>"
     };
 
     //create the translated HTML
@@ -41,14 +40,18 @@ const tranlationService = {
       //if there is text tag inside a text tag -> <a>We need this sentence <strong>together</strong></a>
       if (htmlData[i].type === 'element' && (tranlationService.textTags.indexOf(htmlData[i].tagName) !== -1)) {
         tranlationService.sentenceArray = [...tranlationService.sentenceArray, stringify([htmlData[i]])];
-      } else if (htmlData[i].type === 'element') {
+      } else if ((htmlData[i].type === 'element') && (htmlData[i].children.length > 0)) {
         //if its not a text tag then keep traversing till you find any text tag in the children nodes
         tranlationService.extractSentences(htmlData[i].children);
       } else if (htmlData[i].type === 'text') {
-        // if its a text tag then store all the sentences in the array
-        tranlationService.sentenceArray = [...tranlationService.sentenceArray, htmlData[i].content.split('.').map(function(index, elem) {
-          return index;
-        })];
+        // if its a text tag and has some content then store all the sentences in the array
+        if (htmlData[i].content) {
+          tranlationService.sentenceArray = [...tranlationService.sentenceArray, htmlData[i].content.split('.').map(function(index, elem) {
+            if (index.replace(/\s/g, '').length > 0) {
+              return index + '.';
+            }
+          })];
+        }
       }
     }
     return tranlationService.sentenceArray;
@@ -101,7 +104,7 @@ const tranlationService = {
       } else if (htmlData[i].type === 'element') {
         tranlationService.extractText(originalHTML, htmlData[i].children, translatedObj);
       } else if (htmlData[i].type === 'text') {
-        htmlData[i].content = translatedJSON[tranlationService.count].join('.');
+        htmlData[i].content = translatedJSON[tranlationService.count].join('');
         tranlationService.count++;
       }
     }
