@@ -8,7 +8,7 @@ const tranlationService = {
   sentenceArray: [],
   init() {
     //html input
-    const html = '<div>hello div tag. this is a new line.<a class="test">hello a tag<strong> this is gonna be hard</strong></a></div><div>hello div 2 tag<a class="test">hello a2 tag<strong> this is gonna be harder</strong></a></div>';
+    const html = '<h2>Set up Active Directory Connector v1.5 logging </h2> The Active Directory Connector (ADC) logs activities to the Windows Event Viewer. <br> <br> Back to <a href="/openvoice/help/active-directory-connector-v15-ov790002" target="_blank">Active Directory Connector Contents</a> <br> <br> <h2>Set up logging in the Active Directory Connector </h2> <blockquote>  1. Open the ADC and select the  <b>Operation</b> tab.  <br>  <br> 2. In the  <i>More configuration</i> section, set the  <b>Windows event logger</b>,  <b>File logger</b> and the  <b>Folder for file logging</b> as needed.  <br>  <br> 3. Click  <b>Apply changes</b> when finished.  <br>  <br>  <img src="https://assets.cdngetgo.com/0b/aa/a1b6d7f4421686c2cbaae331cdda/rtaimage-eid-kac1b000000tobu-feoid-00n1b00000b8tsp-refid-0em1b0000005imt">  <br>  <br> </blockquote> <h2>Locate ADC log files in the Windows Event Viewer </h2> <blockquote>  1. Open the Windows Event Viewer (  <b>Start</b> &gt;  <b>All Programs</b> &gt;  <b>Administrative Tools</b> &gt;  <b>Event Viewer</b>).  <br>  <br> 2. In the left navigation, select  <b>Applications and Services Logs &gt; AD Connector</b>. Only Active Directory Connector logs will be displayed.  <br>  <br>  <img src="https://assets.cdngetgo.com/21/25/e113ffee48fbac8666b2a65e46eb/rtaimage-eid-kac1b000000tobu-feoid-00n1b00000b8tsp-refid-0em1b0000005imr">  <br>  <br> </blockquote> <h2>See also </h2> <ul>  <li><a href="/openvoice/help/set-up-email-notification-for-adc-errors-ov700016" target="_blank">Set up email notifications for error messages</a> </li>  <li><a href="/openvoice/help/set-up-email-notification-for-adc-status-ov700017" target="_blank">Set up email notifications for daily status updates</a> </li> </ul>';
     //parse the HTML
     const parsedHTML = parse(html);
 
@@ -17,11 +17,17 @@ const tranlationService = {
 
     //translated JSON
     let translatedObj = {
-      1: "hello div tag -in spanish",
-      2: " this is a new line -in spanish",
-      3: "<a class='test'>hello a tag<strong> this is gonna be hard -in spanish</strong></a>",
-      4: "hello div 2 tag",
-      5: "<a class='test'>hello a2 tag<strong> this is gonna be harder -in spanish</strong></a>"
+      "1": "<h2>Set up Active Directory Connector v1.5 logging -in spanish</h2>",
+      "2": " The Active Directory Connector (ADC) logs activities to the Windows Event Viewer.-in spanish",
+      "3": " Back to .-in spanish",
+      "4": "<a href='/openvoice/help/active-directory-connector-v15-ov790002' target='_blank'>Active Directory Connector Contents-in spanish</a>",
+      "5": "<h2>Set up logging in the Active Directory Connector-in spanish </h2>",
+      "6": "<blockquote>  1. Open the ADC and select the  <b>Operation</b> tab.  <br>  <br> 2. In the  <i>More configuration</i> section, set the  <b>Windows event logger</b>,  <b>File logger</b> and the  <b>Folder for file logging</b> as needed.  <br>  <br> 3. Click  <b>Apply changes</b> when finished. -in spanish <br>  <br>  <img src='https://assets.cdngetgo.com/0b/aa/a1b6d7f4421686c2cbaae331cdda/rtaimage-eid-kac1b000000tobu-feoid-00n1b00000b8tsp-refid-0em1b0000005imt'>  <br>  <br> </blockquote>",
+      "7": "<h2>Locate ADC log files in the Windows Event Viewer -in spanish</h2>",
+      "8": "<blockquote>  1. Open the Windows Event Viewer (  <b>Start</b> >  <b>All Programs</b> >  <b>Administrative Tools</b> >  <b>Event Viewer</b>).  <br>  <br> 2. In the left navigation, select  <b>Applications and Services Logs > AD Connector</b>. Only Active Directory Connector logs will be displayed.-in spanish  <br>  <br>  <img src='https://assets.cdngetgo.com/21/25/e113ffee48fbac8666b2a65e46eb/rtaimage-eid-kac1b000000tobu-feoid-00n1b00000b8tsp-refid-0em1b0000005imr'>  <br>  <br> </blockquote>",
+      "9": "<h2>See also-in spanish </h2>",
+      "10": "<a href='/openvoice/help/set-up-email-notification-for-adc-errors-ov700016' target='_blank'>Set up email notifications for error messages-in spanish</a>",
+      "11": "<a href='/openvoice/help/set-up-email-notification-for-adc-status-ov700017' target='_blank'>Set up email notifications for daily status updates-in spanish</a>"
     };
 
     //create the translated HTML
