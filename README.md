@@ -20,3 +20,5 @@ npm run dev
 ```
 npm run build
 ```
+# Feature branch mentioned below handles the zip bundles
+https://github.com/gurusewak/translation/tree/feature/handleZipBundles
