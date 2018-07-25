@@ -52,53 +52,6 @@ const tranlationService = {
     });
     return jsonObj;
   },
-  extractText(originalHTML, htmlData, translatedObj) {
-    let sentenceCount = 0;
-    //extract all the sentences from HTML tp map it to the translated JSON recieved from the translation team
-    let sentenceData = tranlationService.extractSentences(htmlData);
-    sentenceData = JSON.stringify(sentenceData);
-    // replace every text with special symbols and a number to create the JSON for translation team
-    sentenceData = sentenceData.replace(/\"(.*?)\"/g, function(match) {
-      //remove the special character  
-      match = match.replace(/\"|\"/g, '');
-      sentenceCount++;
-      return '"~' + sentenceCount + '~"';
-    });
-    //compare the sentenceData with the keys in translated JSON and extract the text from the values
-    let translatedJSON = sentenceData.replace(/\~(.*?)\~/g, function(match) {
-      //remove the special character  
-      match = match.replace(/\~|\~/g, '');
-
-      return translatedObj[match];
-    });
-    //parse the translated JSON and use the values to create the HTML array
-    translatedJSON = JSON.parse(translatedJSON);
-    translatedJSON = Object.values(translatedJSON);
-    //create the HTML data for the stringify function which will create the translated HTML
-    for (let i = 0; i < htmlData.length; i++) {
-      if (htmlData[i].type === 'element' && (tranlationService.textTags.indexOf(htmlData[i].tagName) !== -1)) {
-        htmlData[i] = parse(translatedJSON[tranlationService.count])[0];
-        tranlationService.count++;
-      } else if (htmlData[i].type === 'element') {
-        tranlationService.extractText(originalHTML, htmlData[i].children, translatedObj);
-      } else if (htmlData[i].type === 'text') {
-        htmlData[i].content = translatedJSON[tranlationService.count].join('');
-        tranlationService.count++;
-      }
-    }
-    originalHTML = [...originalHTML, htmlData];
-    return htmlData;
-  },
-  createHTML(originalHTML, htmlData, translatedObj) {
-    //store the parsed HTML array length
-    const arrayLength = originalHTML.length;
-    //extract text from the translatedObj
-    let translatedSentences = tranlationService.extractText(originalHTML, htmlData, translatedObj);
-    translatedSentences = translatedSentences.splice(0, arrayLength);
-    //use the stringify function to generate the HTML
-    const translatedHTML = stringify(translatedSentences);
-    return translatedHTML;
-  },
   downloadFile(data) {
     const a = window.document.createElement('a');
     a.href = window.URL.createObjectURL(new Blob([JSON.stringify(data)], { type: 'application/json' }));
@@ -165,7 +118,62 @@ const tranlationService = {
     });
   },
   handleBundle() {
+    $("#bundleInput").on("change", function(evt) {
+      //capture the file information.
+      function handleZip(file) {
+        const new_zip = new JSZip();
+        //read the Blob
+        new_zip.loadAsync(file)
+          .then(function(zip) {
+            //read the entries
+            zip.forEach(function(relativePath, zipEntry) {
+              if ((relativePath === zipEntry.name) && (zipEntry.name.indexOf('json') !== -1)) {
+                new_zip.file(zipEntry.name).async("string").then(function(value) {
+                  function IsJsonString(str) {
+                    try {
+                      var json = JSON.parse(str);
+                      return (typeof json === 'object');
+                    } catch (e) {
+                      return false;
+                    }
+                  }
 
+                  function joinString(obj) {
+                    let string = '';
+                    for (var key in obj) {
+                      string = string + obj[key];
+                    }
+                    return string;
+                  }
+
+                  if (IsJsonString(value)) {
+                    const fileData = JSON.parse(value);
+                    //convert the translated strings into json
+                    let array = [];
+                    fileData.forEach(function(index, el) {
+                      let dataObj = {};
+                      for (var key in index) {
+                        dataObj = {
+                          ...dataObj,
+                          [key]: joinString(index[key])
+                        };
+                      }
+                      array = [...array, dataObj];
+                    });
+                    console.log("array", array);
+                  }
+                });
+              }
+            });
+          }, function(e) {
+            $('.error').html("Error reading " + file.name + ": " + e.message);
+          });
+      }
+      const files = evt.target.files;
+      for (let i = 0; i < files.length; i++) {
+        handleZip(files[i]);
+      }
+    });
   }
 };
 
