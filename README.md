@@ -1,6 +1,6 @@
 # Translation 
 
-HTML to JSON and translated JSON to HTML
+Handles the zip bundles and converts HTML to JSON and then translated JSON back to HTML
 
 
 ### Installation
