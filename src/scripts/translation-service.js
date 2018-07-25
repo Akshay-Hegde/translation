@@ -122,6 +122,7 @@ const tranlationService = {
       //capture the file information.
       function handleZip(file) {
         const new_zip = new JSZip();
+
         //read the Blob
         new_zip.loadAsync(file)
           .then(function(zip) {
@@ -160,10 +161,26 @@ const tranlationService = {
                       }
                       array = [...array, dataObj];
                     });
-                    console.log("array", array);
+                    const arrStrings = JSON.stringify(array);
+                    const fileZip = new JSZip();
+                    fileZip.file(zipEntry.name, arrStrings);
+                    fileZip.generateAsync({
+                      type: "blob"
+                    }).then(function(content) {
+                      //saveAs(content, "bundle.zip"); // 2) trigger the download
+                    }, function(err) {
+                      console.log("err", err);
+                    });
                   }
                 });
               }
+            });
+            new_zip.generateAsync({
+              type: "blob"
+            }).then(function(content) {
+              saveAs(content, "bundle.zip"); // 2) trigger the download
+            }, function(err) {
+              console.log("err", err);
             });
           }, function(e) {
             $('.error').html("Error reading " + file.name + ": " + e.message);
