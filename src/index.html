@@ -10,26 +10,22 @@
 
 <body>
   <div class="container-fluid">
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="col-sm-6">
-          <h1>HTML</h1>
-          <div class="HTML"></div>
-        </div>
-        <div class="col-sm-6">
-          <h1>Transaltion JSON</h1>
-          <div class="JSON"></div>
-        </div>
+    <div class="col-sm-12">
+      <div class="col-sm-6">
+        <h2>For translation team</h2>
+        <h4>Choose the local(s) zip file(s)</h4>
+        <p class="note">Note : your browser will process the zip file, don't choose a file too big !</p>
+        <input type="file" id="fileInput" name="file" multiple />
+        <br />
+        <div id="error"></div>
       </div>
-      <div class="col-sm-12">
-        <div class="col-sm-6">
-          <h1>Transalted JSON</h1>
-          <div class="transaltionJSON"></div>
-        </div>
-        <div class="col-sm-6">
-          <h1>Translated HTML</h1>
-          <div class="translatedHTML"></div>
-        </div>
+      <div class="col-sm-6">
+        <h2>For BrightSpot bundle</h2>
+        <h4>Choose the local(s) zip file(s)</h4>
+        <p class="note">Note : your browser will process the zip file, don't choose a file too big !</p>
+        <input type="file" id="bundleInput" name="file" multiple />
+        <br />
+        <div id="error"></div>
       </div>
     </div>
   </div>
