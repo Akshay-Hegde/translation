@@ -52,10 +52,10 @@ const tranlationService = {
     });
     return jsonObj;
   },
-  downloadFile(data) {
+  downloadFile(data, filename) {
     const a = window.document.createElement('a');
     a.href = window.URL.createObjectURL(new Blob([JSON.stringify(data)], { type: 'application/json' }));
-    a.download = 'test.json';
+    a.download = 'en_' + filename;
     // Append anchor to body.
     document.body.appendChild(a);
     a.click();
@@ -116,7 +116,7 @@ const tranlationService = {
                       array = [...array, dataObj];
                     });
                     //download the json file
-                    tranlationService.downloadFile(array);
+                    tranlationService.downloadFile(array, zipEntry.name);
                   }
                 });
               }
