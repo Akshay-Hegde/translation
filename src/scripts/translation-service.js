@@ -62,6 +62,14 @@ const tranlationService = {
     // Remove anchor from body
     document.body.removeChild(a);
   },
+  IsJsonString(str) {
+    try {
+      var json = JSON.parse(str);
+      return (typeof json === 'object');
+    } catch (e) {
+      return false;
+    }
+  },
   handleZip() {
     $("#fileInput").on("change", function(evt) {
       //capture the file information.
@@ -75,39 +83,41 @@ const tranlationService = {
               if (zipEntry.name.indexOf('_en') !== -1) {
                 //only english file
                 new_zip.file(zipEntry.name).async("string").then(function(value) {
-                  let fileData = JSON.parse(value);
+                  if (tranlationService.IsJsonString(value)) {
+                    let fileData = JSON.parse(value);
 
-                  //conver the strings into translation JSON
-                  let array = [];
-                  fileData.forEach(function(index, el) {
-                    let dataObj = { originalHTML: {} };
-                    tranlationService.sentenceArray = [];
-                    for (var key in index) {
-                      let parsedHTML = [];
-                      if (key.indexOf('brightspot') === -1) {
-                        //parse the HTML
-                        if (typeof(index[key]) === 'object') {
-                          dataObj.originalHTML[key] = parsedHTML = parse(index[key][0]);
+                    //conver the strings into translation JSON
+                    let array = [];
+                    fileData.forEach(function(index, el) {
+                      let dataObj = { originalHTML: {} };
+                      tranlationService.sentenceArray = [];
+                      for (var key in index) {
+                        let parsedHTML = [];
+                        if (key.indexOf('brightspot') === -1) {
+                          //parse the HTML
+                          if (typeof(index[key]) === 'object') {
+                            dataObj.originalHTML[key] = parsedHTML = parse(index[key][0]);
+                          } else {
+                            dataObj.originalHTML[key] = parsedHTML = parse(index[key]);
+                          }
+                          //get the translation JSON
+                          const translationJSON = tranlationService.createJSON(parsedHTML);
+                          dataObj = {
+                            ...dataObj,
+                            [key]: translationJSON
+                          };
                         } else {
-                          dataObj.originalHTML[key] = parsedHTML = parse(index[key]);
+                          dataObj = {
+                            ...dataObj,
+                            [key]: index[key]
+                          };
                         }
-                        //get the translation JSON
-                        const translationJSON = tranlationService.createJSON(parsedHTML);
-                        dataObj = {
-                          ...dataObj,
-                          [key]: translationJSON
-                        };
-                      } else {
-                        dataObj = {
-                          ...dataObj,
-                          [key]: index[key]
-                        };
                       }
-                    }
-                    array = [...array, dataObj];
-                  });
-                  //download the json file
-                  tranlationService.downloadFile(array);
+                      array = [...array, dataObj];
+                    });
+                    //download the json file
+                    tranlationService.downloadFile(array);
+                  }
                 });
               }
             });
@@ -121,6 +131,19 @@ const tranlationService = {
       }
     });
   },
+  createHTML(htmlData, translatedObj) {
+    let translatedHTML;
+    //store the parsed HTML array length
+    for (var i = 0; i < htmlData.length; i++) {
+      if (htmlData[i].type === 'element') {
+        tranlationService.createHTML(htmlData[i].children, translatedObj);
+      } else if (htmlData[i].type === 'text') {
+        htmlData[i].content = translatedObj;
+      }
+    }
+    translatedHTML = stringify(htmlData);
+    return translatedHTML;
+  },
   handleBundle() {
     $("#bundleInput").on("change", function(evt) {
       //capture the file information.
@@ -132,18 +155,12 @@ const tranlationService = {
         new_zip.loadAsync(file)
           .then(function(zip) {
             //read the entries
+            tranlationService.count = 0;
             let fileZip = new JSZip();
             zip.forEach(function(relativePath, zipEntry) {
               if ((relativePath === zipEntry.name) && (zipEntry.name.indexOf('json') !== -1)) {
                 new_zip.file(zipEntry.name).async("string").then(function(value) {
-                  function IsJsonString(str) {
-                    try {
-                      var json = JSON.parse(str);
-                      return (typeof json === 'object');
-                    } catch (e) {
-                      return false;
-                    }
-                  }
+                  tranlationService.count++;
 
                   function joinString(obj) {
                     let string = '';
@@ -152,8 +169,7 @@ const tranlationService = {
                     }
                     return string;
                   }
-
-                  if (IsJsonString(value)) {
+                  if (tranlationService.IsJsonString(value)) {
                     const fileData = JSON.parse(value);
                     //convert the translated strings into json
                     let array = [];
@@ -168,15 +184,17 @@ const tranlationService = {
                         } else if (key !== 'originalHTML') {
                           dataObj = {
                             ...dataObj,
-                            [key]: stringify(index.originalHTML[key])
+                            [key]: tranlationService.createHTML(index.originalHTML[key], joinString(index[key]))
                           };
                         }
                       }
                       array = [...array, dataObj];
                     });
+
                     const arrStrings = JSON.stringify(array);
                     fileZip.file(zipEntry.name, arrStrings);
-                  } else {
+                  }
+                  if (tranlationService.count === Object.keys(zip.files).length - 1) {
                     fileZip.generateAsync({
                       type: "blob"
                     }).then(function(content) {
@@ -188,7 +206,6 @@ const tranlationService = {
                 });
               }
             });
-
           }, function(e) {
             console.log("err", e.message);
           });
