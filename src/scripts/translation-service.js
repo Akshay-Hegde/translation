@@ -121,10 +121,6 @@ const tranlationService = {
       }
     });
   },
-  createHTML(originalHTML, translatedJSON) {
-    const sentence = stringify(originalHTML);
-    return sentence;
-  },
   handleBundle() {
     $("#bundleInput").on("change", function(evt) {
       //capture the file information.
@@ -173,7 +169,7 @@ const tranlationService = {
                         } else if (key !== 'originalHTML') {
                           dataObj = {
                             ...dataObj,
-                            [key]: tranlationService.createHTML(index.originalHTML[key], joinString(index[key]))
+                            [key]: stringify(index.originalHTML[key])
                           };
                         }
                       }
