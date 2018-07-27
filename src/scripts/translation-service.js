@@ -160,7 +160,6 @@ const tranlationService = {
                     fileData.forEach(function(index, el) {
                       let dataObj = {};
                       for (var key in index) {
-                        console.log("index", index);
                         if (key.indexOf('brightspot') !== -1) {
                           dataObj = {
                             ...dataObj,
@@ -174,9 +173,7 @@ const tranlationService = {
                         }
                       }
                       array = [...array, dataObj];
-                      console.log("array", array);
                     });
-
                     const arrStrings = JSON.stringify(array);
                     fileZip.file(zipEntry.name, arrStrings);
                   } else {

@@ -4,7 +4,8 @@
   "description": "HTML to JSON and translated JSON to HTML",
   "scripts": {
     "build": "webpack --config webpack-prod.config.js --colors",
-    "dev": "webpack-dev-server --open --config webpack-dev.config.js --watch --colors"
+    "dev": "webpack-dev-server --open --config webpack-dev.config.js --watch --colors",
+    "lint":"eslint src --fix"
   },
   "repository": {
     "type": "git",
