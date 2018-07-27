@@ -13,8 +13,8 @@ const tranlationService = {
     this.handleBundle();
   },
   extractSentences(htmlData) {
-    //tranlationService.sentenceArray = [];
-    for (let i = 0; i < htmlData.length; i++) {
+    tranlationService.sentenceArray = [];
+    for (var i = 0; i < htmlData.length; i++) {
       //if there is text tag inside a text tag -> <a>We need this sentence <strong>together</strong></a>
       if (htmlData[i].type === 'element' && (tranlationService.textTags.indexOf(htmlData[i].tagName) !== -1)) {
         tranlationService.sentenceArray = [...tranlationService.sentenceArray, stringify([htmlData[i]])];
@@ -79,24 +79,28 @@ const tranlationService = {
 
                   //conver the strings into translation JSON
                   let array = [];
-
                   fileData.forEach(function(index, el) {
-                    let dataObj = {};
+                    let dataObj = { originalHTML: {} };
                     tranlationService.sentenceArray = [];
                     for (var key in index) {
                       let parsedHTML = [];
                       if (key.indexOf('brightspot') === -1) {
                         //parse the HTML
                         if (typeof(index[key]) === 'object') {
-                          parsedHTML = parse(index[key][0]);
+                          dataObj.originalHTML[key] = parsedHTML = parse(index[key][0]);
                         } else {
-                          parsedHTML = parse(index[key]);
+                          dataObj.originalHTML[key] = parsedHTML = parse(index[key]);
                         }
                         //get the translation JSON
                         const translationJSON = tranlationService.createJSON(parsedHTML);
                         dataObj = {
                           ...dataObj,
                           [key]: translationJSON
+                        };
+                      } else {
+                        dataObj = {
+                          ...dataObj,
+                          [key]: index[key]
                         };
                       }
                     }
@@ -108,7 +112,7 @@ const tranlationService = {
               }
             });
           }, function(e) {
-            $('.error').html("Error reading " + file.name + ": " + e.message);
+            console.log("err", e.message);
           });
       }
       const files = evt.target.files;
@@ -117,16 +121,22 @@ const tranlationService = {
       }
     });
   },
+  createHTML(originalHTML, translatedJSON) {
+    const sentence = stringify(originalHTML);
+    return sentence;
+  },
   handleBundle() {
     $("#bundleInput").on("change", function(evt) {
       //capture the file information.
       function handleZip(file) {
         const new_zip = new JSZip();
+        const bundle_zip = new JSZip();
 
         //read the Blob
         new_zip.loadAsync(file)
           .then(function(zip) {
             //read the entries
+            let fileZip = new JSZip();
             zip.forEach(function(relativePath, zipEntry) {
               if ((relativePath === zipEntry.name) && (zipEntry.name.indexOf('json') !== -1)) {
                 new_zip.file(zipEntry.name).async("string").then(function(value) {
@@ -154,20 +164,30 @@ const tranlationService = {
                     fileData.forEach(function(index, el) {
                       let dataObj = {};
                       for (var key in index) {
-                        dataObj = {
-                          ...dataObj,
-                          [key]: joinString(index[key])
-                        };
+                        console.log("index", index);
+                        if (key.indexOf('brightspot') !== -1) {
+                          dataObj = {
+                            ...dataObj,
+                            [key]: index[key]
+                          };
+                        } else if (key !== 'originalHTML') {
+                          dataObj = {
+                            ...dataObj,
+                            [key]: tranlationService.createHTML(index.originalHTML[key], joinString(index[key]))
+                          };
+                        }
                       }
                       array = [...array, dataObj];
+                      console.log("array", array);
                     });
+
                     const arrStrings = JSON.stringify(array);
-                    const fileZip = new JSZip();
                     fileZip.file(zipEntry.name, arrStrings);
+                  } else {
                     fileZip.generateAsync({
                       type: "blob"
                     }).then(function(content) {
-                      //saveAs(content, "bundle.zip"); // 2) trigger the download
+                      saveAs(content, "bundle.zip");
                     }, function(err) {
                       console.log("err", err);
                     });
@@ -175,15 +195,9 @@ const tranlationService = {
                 });
               }
             });
-            new_zip.generateAsync({
-              type: "blob"
-            }).then(function(content) {
-              saveAs(content, "bundle.zip"); // 2) trigger the download
-            }, function(err) {
-              console.log("err", err);
-            });
+
           }, function(e) {
-            $('.error').html("Error reading " + file.name + ": " + e.message);
+            console.log("err", e.message);
           });
       }
       const files = evt.target.files;
