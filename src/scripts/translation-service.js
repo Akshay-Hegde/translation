@@ -163,7 +163,7 @@ const tranlationService = {
     });
   },
   createHTML(htmlData, translatedObj) {
-    let translatedHTML ='';
+    let translatedHTML = '';
     //store the parsed HTML array length
     for (var i = 0; i < htmlData.length; i++) {
       if (htmlData[i].type === 'element') {
@@ -256,14 +256,16 @@ const tranlationService = {
                       });
                     }
                     if (tranlationService.count === Object.keys(zip.files).length - 1) {
-
-                      fileZip.generateAsync({
-                        type: "blob"
-                      }).then(function(content) {
-                        saveAs(content, "brightspot_bundle.zip");
-                      }, function(err) {
-                        console.log("err", err);
-                      });
+                      //wait for promise to be resolved and create the bundle
+                      setTimeout(function() {
+                        fileZip.generateAsync({
+                          type: "blob"
+                        }).then(function(content) {
+                          saveAs(content, "brightspot_bundle.zip");
+                        }, function(err) {
+                          console.log("err", err);
+                        });
+                      }, 500)
                     }
                   });
                 }

@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack:///./src/styles/index.scss"],"names":[],"mappings":"AAAA,IACE,UAAY,CAEd,MACE,SAAW,CAEb,MACE,UAAY,CAEd,MACE,YAAc","file":"styles/bundle.css","sourcesContent":["div {\n  float: left; }\n\n.HTML {\n  color: red; }\n\n.JSON {\n  color: blue; }\n\n.hide {\n  display: none; }\n"],"sourceRoot":""}
